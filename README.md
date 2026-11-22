@@ -25,35 +25,34 @@ g++ -std=c++17 -Wall -Wextra -Wpedantic -o a1_music a1_music.cpp
 
 | File | Program | Concepts demonstrated |
 |------|---------|-----------------------|
-| [a1_music.cpp](a1_music.cpp) | Music library manager | Class, encapsulation, constructors, copy constructor, destructor with a live-object counter, `static` data member, `std::vector` of objects |
-| [a2_bank.cpp](a2_bank.cpp) | Bank account operations | Parameterised input through a member function, `this` pointer, chained calls returning `Account&`, `static` member function, `friend` function, `inline` function |
+| [a1_music.cpp](a1_music.cpp) | Online music management system | Class with default, parameterised and copy constructors, destructor, dynamic array of `Song*` with capacity doubling, deep copy of the database, play counts and availability |
+| [a2_bank.cpp](a2_bank.cpp) | Bank account operations | `this` pointer, `static` data member and `static` member function, `inline` member function, `friend` function |
 | [a3_biodata.cpp](a3_biodata.cpp) | Employee bio-data | Inheritance, **virtual base class** (diamond), multiple inheritance, protected access |
 | [a4_vehicle.cpp](a4_vehicle.cpp) | Vehicle rental fleet | Abstract base class, pure virtual functions, runtime polymorphism through base pointers, virtual destructor |
-| [a5_complex.cpp](a5_complex.cpp) | Complex number arithmetic | Operator overloading (`+`, `*`), `friend` stream operators `<<` and `>>`, default arguments via constructors |
-| [a6_file.cpp](a6_file.cpp) | Student records file I/O | `ofstream` / `ifstream`, stream state checks, formatted output with `iomanip` |
+| [a5_complex.cpp](a5_complex.cpp) | Complex number arithmetic | Operator overloading (`+`, `*`), `friend` stream operators `<<` and `>>` |
+| [a6_file.cpp](a6_file.cpp) | Student record file I/O | `ofstream` / `ifstream`, `getline` from a file, closing streams |
 | [a7_exception.cpp](a7_exception.cpp) | Eligibility criteria check | User-defined exception class derived from `std::exception`, `what()` override, `throw` / `catch` |
 | [a8_template_sort.cpp](a8_template_sort.cpp) | Generic sort | Function templates, template argument deduction, sorting across `int` and `float` |
-| [a9_item_vector.cpp](a9_item_vector.cpp) | Item inventory | `std::vector` of class objects, STL `sort` with lambdas, `find_if`, formatted tabular output |
+| [a9_item_vector.cpp](a9_item_vector.cpp) | Item inventory | `std::vector` of class objects, STL `sort` with lambdas, `find_if`, tabular output |
 
 ## Sample output
 
 `a5_complex` — operator overloading:
 
 ```
-Default complex number: 0 + 0i
-First: 3 + 4i
-Second: 1 - 2i
-Sum: 4 + 2i
-Product: 11 - 2i
+First Complex Number = 3 + 4i
+Second Complex Number = 1 - 2i
+Addition = 4 + 2i
+Multiplication = 11 - 2i
 ```
 
-`a6_file` — written to and read back from `students.txt`:
+`a6_file` — written to and read back from `student.txt`:
 
 ```
-Name                Age   Roll
-------------------------------------
-Alice               20    101
-Bob                 21    102
+Student Details from File:
+Student Name: Ravi
+Age: 21
+Roll Number: 101
 ```
 
 `a7_exception` — a rejected applicant:
@@ -65,36 +64,30 @@ Criteria not met: Age must be between 18 and 55.
 `a9_item_vector` — sorted inventory:
 
 ```
-Code      Name           Cost        Quantity
------------------------------------------------
-101       Pen            10.50       50
-102       Book           250.00      20
-103       Bag            899.99      5
+Code	Name	Cost	Quantity
+103	Bag	899.99	5
+102	Book	250	20
+101	Pen	10.5	50
 ```
 
 ## Test inputs
 
 `tests/aN_*.in` holds one scripted session per program, so `make test` runs
-non-interactively. Text fields that may contain spaces (song playlist names,
-employee names and addresses, item names) are read with `getline`, so each
-such field occupies its own line in the input files.
+non-interactively. Each program reads names and other text fields as single
+tokens (`cin >> name`), so entries such as `Ravi` work but `Ravi Kumar` does
+not — keep one word per field in the input files.
 
-## Fixes applied during the build check
+## Notes on the current sources
 
-- **a3_biodata** — a name containing a space (`Ravi Kumar`) made `cin >> empID`
-  fail; the failed stream state then silently blanked every later field, so the
-  program printed garbage. The name is now read with `getline(cin >> ws, name)`,
-  `accept()` stops at the first failed read, and `main` reports bad numeric
-  input instead of printing an empty record.
-- **a1_music** — the live-object counter was printed while the `vector<Song>`
-  was still in scope, so a correct program reported `Song objects alive: 1`.
-  The library is now scoped so the counter shows `0` after destruction; the
-  playlist name also accepts spaces.
-- **a9_item_vector** — item names were read with `cin >> name`, so a name with a
-  space broke the following numeric reads; both entry and search now use
-  `getline`.
-- **a8_template_sort** — a non-positive or non-numeric count is rejected before
-  `new T[n]` instead of throwing `bad_array_new_length`.
+- **a4_vehicle** — the fleet array holds 20 pointers; adding the 21st vehicle
+  used to write past the array (a stack buffer overflow, caught with
+  AddressSanitizer). The add path now checks `count >= 20` and reports that the
+  fleet is full.
+- **a5_complex** — `operator<<` printed a negative imaginary part as
+  `1 + -2i`; it now prints `1 - 2i`. The operator takes a `const Complex&`, so a
+  temporary result can be streamed directly.
+- **a8_template_sort** — a non-positive or non-numeric element count is rejected
+  before `new T[n]` instead of throwing `bad_array_new_length`.
 
 ## License
 

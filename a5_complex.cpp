@@ -1,34 +1,82 @@
 #include <iostream>
 using namespace std;
 
-class Complex {
-    double real, imag;
-public:
-    Complex() : real(0), imag(0) {}
-    Complex(double r, double i) : real(r), imag(i) {}
+class Complex
+{
+    int real, imag;
 
-    Complex operator+(const Complex &o) const { return Complex(real + o.real, imag + o.imag); }
-    Complex operator*(const Complex &o) const {
-        return Complex(real * o.real - imag * o.imag, real * o.imag + imag * o.real);
+public:
+
+    Complex()
+    {
+        real = 0;
+        imag = 0;
     }
-    friend ostream &operator<<(ostream &out, const Complex &c) {
-        out << c.real << (c.imag < 0 ? " - " : " + ") << (c.imag < 0 ? -c.imag : c.imag) << "i";
-        return out;
+
+    Complex(int r, int i)
+    {
+        real = r;
+        imag = i;
     }
-    friend istream &operator>>(istream &in, Complex &c) {
-        cout << "Real part: "; in >> c.real;
-        cout << "Imaginary part: "; in >> c.imag;
+
+    Complex operator+(Complex c)
+    {
+        Complex temp;
+
+        temp.real = real + c.real;
+        temp.imag = imag + c.imag;
+
+        return temp;
+    }
+
+    Complex operator*(Complex c)
+    {
+        Complex temp;
+
+        temp.real = (real * c.real) - (imag * c.imag);
+        temp.imag = (real * c.imag) + (imag * c.real);
+
+        return temp;
+    }
+
+    friend istream& operator>>(istream& in, Complex& c)
+    {
+        in >> c.real >> c.imag;
         return in;
+    }
+
+    friend ostream& operator<<(ostream& out, const Complex& c)
+    {
+        out << c.real;
+
+        if (c.imag < 0)
+            out << " - " << -c.imag;
+        else
+            out << " + " << c.imag;
+
+        out << "i";
+        return out;
     }
 };
 
-int main() {
-    Complex zero, a, b;
-    cout << "Default complex number: " << zero << "\n";
-    cout << "Enter first complex number:\n"; cin >> a;
-    cout << "Enter second complex number:\n"; cin >> b;
-    cout << "First: " << a << "\nSecond: " << b << "\n";
-    cout << "Sum: " << a + b << "\n";
-    cout << "Product: " << a * b << "\n";
+int main()
+{
+    Complex c1, c2, c3, c4;
+
+    cout << "Enter first complex number (real imaginary): ";
+    cin >> c1;
+
+    cout << "Enter second complex number (real imaginary): ";
+    cin >> c2;
+
+    c3 = c1 + c2;
+    c4 = c1 * c2;
+
+    cout << "\nFirst Complex Number = " << c1;
+    cout << "\nSecond Complex Number = " << c2;
+
+    cout << "\nAddition = " << c3;
+    cout << "\nMultiplication = " << c4;
+
     return 0;
 }

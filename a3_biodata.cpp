@@ -2,72 +2,101 @@
 #include <string>
 using namespace std;
 
-class Base {
+class Person {
 protected:
+    int empId;
     string name;
-    int empID;
+
 public:
-    void acceptBase() {
-        cout << "Name: ";
-        getline(cin >> ws, name);            // full name may contain spaces
-        cout << "Employee ID: ";
-        cin >> empID;
+    void getPersonData() {
+        cout << "Enter Employee ID: ";
+        cin >> empId;
+        cout << "Enter Name: ";
+        cin >> name;
+    }
+
+    void displayPersonData() {
+        cout << "Employee ID : " << empId << endl;
+        cout << "Name        : " << name << endl;
     }
 };
 
-class Personal : virtual public Base {
+class PersonalRecord : virtual public Person {
 protected:
-    string dob, address;
+    string phone;
+    string city;
+
 public:
-    void acceptPersonal() { cout << "Date of birth: "; cin >> dob; cout << "Address: "; cin.ignore(); getline(cin, address); }
-    void printPersonal() const { cout << "Name: " << name << "\nEmployee ID: " << empID
-                                      << "\nDOB: " << dob << "\nAddress: " << address << "\n"; }
+    void getPersonalData() {
+        cout << "Enter Phone: ";
+        cin >> phone;
+        cout << "\nEnter City: ";
+        cin >> city;
+    }
+
+    void displayPersonalData() {
+        cout << "Phone : " << phone << endl;
+        cout << "City  : " << city << endl;
+    }
 };
 
-class Professional : virtual public Base {
+class ProfessionalRecord : virtual public Person {
 protected:
     string designation;
-    int experience;
-public:
-    void acceptProfessional() { cout << "Designation: "; cin >> designation; cout << "Experience (years): "; cin >> experience; }
-    void printProfessional() const { cout << "Designation: " << designation << "\nExperience: " << experience << " years\n"; }
-};
+    double salary;
 
-class Academic : virtual public Base {
-protected:
-    string degree, university;
-    double percentage;
 public:
-    void acceptAcademic() { cout << "Degree: "; cin >> degree; cout << "University: "; cin >> university; cout << "Percentage: "; cin >> percentage; }
-    void printAcademic() const { cout << "Degree: " << degree << "\nUniversity: " << university << "\nPercentage: " << percentage << "\n"; }
-};
-
-class BioData : public Personal, public Professional, public Academic {
-public:
-    void accept() {
-        acceptBase();
-        if (!cin) return;
-        acceptPersonal();
-        if (!cin) return;
-        acceptProfessional();
-        if (!cin) return;
-        acceptAcademic();
+    void getProfessionalData() {
+        cout << "Enter Designation: ";
+        cin >> designation;
+        cout << "Enter Salary: ";
+        cin >> salary;
     }
-    void print() const {
-        cout << "\n===== EMPLOYEE BIO-DATA =====\n";
-        printPersonal();
-        printProfessional();
-        printAcademic();
+
+    void displayProfessionalData() {
+        cout << "Designation : " << designation << endl;
+        cout << "Salary      : " << salary << endl;
+    }
+};
+
+class AcademicRecord : public PersonalRecord, public ProfessionalRecord {
+private:
+    string degree;
+    float marks;
+
+public:
+    void acceptBioData() {
+        cout << "--- Enter Employee Bio-Data ---" << endl;
+        getPersonData();
+        getPersonalData();
+        getProfessionalData();
+
+        cout << "Enter Highest Degree: ";
+        cin >> degree;
+        cout << "Enter Percentage/Marks: ";
+        cin >> marks;
+    }
+
+    void printBioData() {
+        cout << "\n===============================" << endl;
+        cout << "          EMPLOYEE BIO-DATA       " << endl;
+        cout << "===============================" << endl;
+
+        displayPersonData();
+        displayPersonalData();
+        displayProfessionalData();
+
+        cout << "Degree     : " << degree << endl;
+        cout << "Marks/CGPA : " << marks << endl;
+        cout << "===============================" << endl;
     }
 };
 
 int main() {
-    BioData b;
-    b.accept();
-    if (!cin) {
-        cout << "\nInvalid input: a numeric field received non-numeric text.\n";
-        return 1;
-    }
-    b.print();
+    AcademicRecord emp;
+
+    emp.acceptBioData();
+    emp.printBioData();
+
     return 0;
 }

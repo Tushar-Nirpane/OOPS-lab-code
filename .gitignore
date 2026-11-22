@@ -4,6 +4,7 @@ build/
 *.out
 *.dSYM/
 a.out
+student.txt
 students.txt
 
 # Editor / OS noise

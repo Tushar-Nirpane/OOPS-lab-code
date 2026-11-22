@@ -1,30 +1,59 @@
 #include <iostream>
 #include <fstream>
-#include <iomanip>
-#include <string>
 using namespace std;
 
-int main() {
-    const char *fname = "students.txt";
-    int n;
-    ofstream out(fname);
-    if (!out) { cout << "Cannot open file for writing.\n"; return 1; }
-    cout << "How many students? "; cin >> n;
-    for (int i = 0; i < n; i++) {
-        string name; int age, roll;
-        cout << "Name, age, roll number: "; cin >> name >> age >> roll;
-        out << left << setw(20) << name << setw(6) << age << setw(10) << roll << "\n";
-    }
-    out.close();
-    cout << "Data written and file closed.\n";
+class Student
+{
+    string name;
+    int age, rollno;
 
-    ifstream in(fname);
-    if (!in) { cout << "Cannot open file for reading.\n"; return 1; }
-    cout << "\n" << left << setw(20) << "Name" << setw(6) << "Age" << setw(10) << "Roll" << "\n";
-    cout << string(36, '-') << "\n";
-    string name; int age, roll;
-    while (in >> name >> age >> roll)
-        cout << left << setw(20) << name << setw(6) << age << setw(10) << roll << "\n";
-    in.close();
+public:
+    void getdata()
+    {
+        cout << "Enter student name: ";
+        cin >> name;
+
+        cout << "Enter age: ";
+        cin >> age;
+
+        cout << "Enter roll number: ";
+        cin >> rollno;
+    }
+
+    void writefile()
+    {
+        ofstream fout("student.txt");
+
+        fout << "Student Name: " << name << endl;
+        fout << "Age: " << age << endl;
+        fout << "Roll Number: " << rollno << endl;
+
+        fout.close();
+    }
+
+    void readfile()
+    {
+        ifstream fin("student.txt");
+        string line;
+
+        cout << "\nStudent Details from File:\n";
+
+        while (getline(fin, line))
+        {
+            cout << line << endl;
+        }
+
+        fin.close();
+    }
+};
+
+int main()
+{
+    Student s;
+
+    s.getdata();
+    s.writefile();
+    s.readfile();
+
     return 0;
 }

@@ -4,65 +4,133 @@ using namespace std;
 
 class Vehicle {
 protected:
-    string number;
+    string model;
+    float rate;
+
 public:
-    Vehicle(const string &n) : number(n) {}
-    virtual double rent(int days) const = 0;
-    virtual string type() const = 0;
-    virtual ~Vehicle() { cout << "Vehicle " << number << " removed from fleet.\n"; }
+    Vehicle(string m, float r) {
+        model = m;
+        rate = r;
+    }
+
+    virtual float getRent(int days) = 0;
+
+    virtual void show() {
+        cout << "Model: " << model << " | Daily Rate: $" << rate;
+    }
+
+    virtual ~Vehicle() {}
 };
 
 class Car : public Vehicle {
 public:
-    Car(const string &n) : Vehicle(n) {}
-    double rent(int days) const override { return 1500.0 * days; }
-    string type() const override { return "Car"; }
+    Car(string m, float r) : Vehicle(m, r) {}
+
+    float getRent(int days) {
+        return rate * days;
+    }
+
+    void show() {
+        Vehicle::show();
+        cout << " [Car]" << endl;
+    }
 };
 
 class Bike : public Vehicle {
 public:
-    Bike(const string &n) : Vehicle(n) {}
-    double rent(int days) const override { return 500.0 * days; }
-    string type() const override { return "Bike"; }
+    Bike(string m, float r) : Vehicle(m, r) {}
+
+    float getRent(int days) {
+        return rate * days;
+    }
+
+    void show() {
+        Vehicle::show();
+        cout << " [Bike]" << endl;
+    }
 };
 
 class Truck : public Vehicle {
 public:
-    Truck(const string &n) : Vehicle(n) {}
-    double rent(int days) const override { return 3000.0 * days; }
-    string type() const override { return "Truck"; }
+    Truck(string m, float r) : Vehicle(m, r) {}
+
+    float getRent(int days) {
+        return (rate * days) + 50.0f;
+    }
+
+    void show() {
+        Vehicle::show();
+        cout << " [Truck]" << endl;
+    }
 };
 
 int main() {
-    Vehicle *fleet[20];
-    int count = 0, choice, days, i;
-    string num;
-    do {
-        cout << "\n1.Add Car 2.Add Bike 3.Add Truck 4.Rent vehicle 5.Remove vehicle 0.Exit\nChoice: ";
+    Vehicle* list[20];
+    int count = 0;
+    int choice = 0;
+
+    while (choice != 5) {
+        cout << "\n--- MENU ---" << endl;
+        cout << "1. Add Car" << endl;
+        cout << "2. Add Bike" << endl;
+        cout << "3. Add Truck" << endl;
+        cout << "4. Show All & Calculate Rent" << endl;
+        cout << "5. Exit" << endl;
+        cout << "Enter choice: ";
+
         cin >> choice;
-        if (choice >= 1 && choice <= 3) {
-            if (count == 20) { cout << "Fleet full.\n"; continue; }
-            cout << "Vehicle number: "; cin >> num;
-            if (choice == 1) fleet[count] = new Car(num);
-            else if (choice == 2) fleet[count] = new Bike(num);
-            else fleet[count] = new Truck(num);
-            count++;
-            cout << "Added.\n";
-        } else if (choice == 4) {
-            cout << "Enter index (0-" << count - 1 << ") and days: ";
-            cin >> i >> days;
-            if (i < 0 || i >= count) { cout << "Invalid index.\n"; continue; }
-            cout << fleet[i]->type() << " rent for " << days << " days: Rs. "
-                 << fleet[i]->rent(days) << "\n";
-        } else if (choice == 5) {
-            cout << "Enter index to remove: "; cin >> i;
-            if (i < 0 || i >= count) { cout << "Invalid index.\n"; continue; }
-            delete fleet[i];
-            fleet[i] = fleet[count - 1];
-            count--;
-            cout << "Removed.\n";
+
+        if (cin.fail()) {
+            cin.clear();
+            string junk;
+            cin >> junk;
+            cout << "Invalid input! Try again." << endl;
+            continue;
         }
-    } while (choice != 0);
-    for (i = 0; i < count; i++) delete fleet[i];
+
+        if (choice >= 1 && choice <= 3) {
+            if (count >= 20) {
+                cout << "Fleet is full (20 vehicles)." << endl;
+                continue;
+            }
+            string m;
+            float r;
+            cout << "Enter model name: ";
+            cin >> m;
+            cout << "Enter daily rate: ";
+            cin >> r;
+
+            if (choice == 1) list[count++] = new Car(m, r);
+            if (choice == 2) list[count++] = new Bike(m, r);
+            if (choice == 3) list[count++] = new Truck(m, r);
+
+            cout << "Vehicle added successfully!" << endl;
+        }
+        else if (choice == 4) {
+            if (count == 0) {
+                cout << "No vehicles in list!" << endl;
+            } else {
+                int days;
+                cout << "Enter number of rental days: ";
+                cin >> days;
+                cout << "\n--- Rental Summary ---" << endl;
+                for (int i = 0; i < count; i++) {
+                    cout << (i + 1) << ". ";
+                    list[i]->show();
+                    cout << "   Total Rent: $" << list[i]->getRent(days) << endl;
+                }
+            }
+        }
+        else if (choice == 5) {
+            cout << "Freeing memory and exiting..." << endl;
+            for (int i = 0; i < count; i++) {
+                delete list[i];
+            }
+        }
+        else {
+            cout << "Invalid choice! Enter 1 to 5." << endl;
+        }
+    }
+
     return 0;
 }

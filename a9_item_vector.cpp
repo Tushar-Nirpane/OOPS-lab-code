@@ -2,137 +2,124 @@
 #include <vector>
 #include <algorithm>
 #include <string>
-#include <iomanip>
 using namespace std;
 
 class Item {
-    int code;
-    string name;
-    double cost;
-    int quantity;
 public:
-    Item() : code(0), name(""), cost(0.0), quantity(0) {}
-    Item(int c, const string &n, double co, int q)
-        : code(c), name(n), cost(co), quantity(q) {}
-
-    int getCode() const { return code; }
-    const string &getName() const { return name; }
-    double getCost() const { return cost; }
-    int getQuantity() const { return quantity; }
+    int code, quantity;
+    string name;
+    float cost;
 
     void input() {
-        cout << "Item Code: ";     cin >> code;
-        cin.ignore();
-        cout << "Item Name: ";     getline(cin, name);   // names may contain spaces
-        cout << "Cost: ";          cin >> cost;
-        cout << "Quantity: ";      cin >> quantity;
+        cout << "Enter Code, Name, Cost, Quantity: ";
+        cin >> code >> name >> cost >> quantity;
     }
 
     void display() const {
-        cout << left << setw(10) << code << setw(15) << name
-             << setw(12) << fixed << setprecision(2) << cost
-             << setw(10) << quantity << "\n";
+        cout << code << "\t" << name << "\t"
+             << cost << "\t" << quantity << endl;
     }
 };
 
-void printHeader() {
-    cout << left << setw(10) << "Code" << setw(15) << "Name"
-         << setw(12) << "Cost" << setw(10) << "Quantity" << "\n";
-    cout << string(47, '-') << "\n";
-}
-
-void displayAll(const vector<Item> &items) {
-    if (items.empty()) { cout << "No items.\n"; return; }
-    printHeader();
-    for (const Item &it : items) it.display();
-}
-
 int main() {
-    vector<Item> items;
-    int n;
+    vector<Item> v;
+    int ch, n, code;
+    string name;
 
-    cout << "How many items to enter? ";
-    cin >> n;
-    for (int i = 0; i < n; i++) {
-        cout << "\nEnter details for item " << i + 1 << ":\n";
-        Item it;
-        it.input();
-        items.push_back(it);
-    }
-
-    int choice;
     do {
-        cout << "\n===== Item Menu =====\n"
-             << "1. Display items\n"
-             << "2. Sort by item code\n"
-             << "3. Sort by cost\n"
-             << "4. Sort by quantity\n"
-             << "5. Search by item code\n"
-             << "6. Search by item name\n"
-             << "0. Exit\n"
-             << "Choice: ";
-        cin >> choice;
+        cout << "\n1. Add Items";
+        cout << "\n2. Sort by Code";
+        cout << "\n3. Sort by Cost";
+        cout << "\n4. Sort by Quantity";
+        cout << "\n5. Search by Code";
+        cout << "\n6. Search by Name";
+        cout << "\n7. Display Items";
+        cout << "\n8. Exit";
+        cout << "\nEnter choice: ";
+        cin >> ch;
 
-        switch (choice) {
+        switch(ch) {
         case 1:
-            displayAll(items);
+            cout << "Enter number of items: ";
+            cin >> n;
+            for(int i = 0; i < n; i++) {
+                Item x;
+                x.input();
+                v.push_back(x);
+            }
             break;
+
         case 2:
-            sort(items.begin(), items.end(),
-                 [](const Item &a, const Item &b) { return a.getCode() < b.getCode(); });
-            cout << "Sorted by item code.\n";
-            displayAll(items);
+            sort(v.begin(), v.end(),
+                 [](Item a, Item b) {
+                     return a.code < b.code;
+                 });
+            cout << "Sorted by Code!\n";
             break;
+
         case 3:
-            sort(items.begin(), items.end(),
-                 [](const Item &a, const Item &b) { return a.getCost() < b.getCost(); });
-            cout << "Sorted by cost.\n";
-            displayAll(items);
+            sort(v.begin(), v.end(),
+                 [](Item a, Item b) {
+                     return a.cost < b.cost;
+                 });
+            cout << "Sorted by Cost!\n";
             break;
+
         case 4:
-            sort(items.begin(), items.end(),
-                 [](const Item &a, const Item &b) { return a.getQuantity() < b.getQuantity(); });
-            cout << "Sorted by quantity.\n";
-            displayAll(items);
+            sort(v.begin(), v.end(),
+                 [](Item a, Item b) {
+                     return a.quantity < b.quantity;
+                 });
+            cout << "Sorted by Quantity!\n";
             break;
-        case 5: {
-            int code;
-            cout << "Enter item code to search: ";
+
+        case 5:
+            cout << "Enter item code: ";
             cin >> code;
-            auto it = find_if(items.begin(), items.end(),
-                              [code](const Item &x) { return x.getCode() == code; });
-            if (it != items.end()) {
-                cout << "Search result:\n";
-                printHeader();
-                it->display();
-            } else {
-                cout << "Item with code " << code << " not found.\n";
+            {
+                auto it = find_if(v.begin(), v.end(),
+                                  [code](Item a) {
+                                      return a.code == code;
+                                  });
+
+                if(it != v.end())
+                    it->display();
+                else
+                    cout << "Item not found!\n";
             }
             break;
-        }
-        case 6: {
-            string name;
-            cout << "Enter item name to search: ";
-            getline(cin >> ws, name);
-            vector<Item> found;
-            for (const Item &x : items)
-                if (x.getName() == name) found.push_back(x);
-            if (found.empty()) {
-                cout << "Item '" << name << "' not found.\n";
-            } else {
-                cout << "Search results:\n";
-                printHeader();
-                for (const Item &x : found) x.display();
+
+        case 6:
+            cout << "Enter item name: ";
+            cin >> name;
+            {
+                auto it = find_if(v.begin(), v.end(),
+                                  [name](Item a) {
+                                      return a.name == name;
+                                  });
+
+                if(it != v.end())
+                    it->display();
+                else
+                    cout << "Item not found!\n";
             }
             break;
-        }
-        case 0:
-            cout << "Exiting.\n";
+
+        case 7:
+            cout << "\nCode\tName\tCost\tQuantity\n";
+            for(auto x : v)
+                x.display();
             break;
+
+        case 8:
+            cout << "Exiting...";
+            break;
+
         default:
-            cout << "Invalid choice.\n";
+            cout << "Invalid choice!";
         }
-    } while (choice != 0);
+
+    } while(ch != 8);
 
     return 0;
 }
