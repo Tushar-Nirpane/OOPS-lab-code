@@ -66,7 +66,7 @@ private:
 
 public:
     void acceptBioData() {
-        cout << "--- Enter Employee Bio-Data ---" << endl;
+        cout << "Enter Employee Bio-Data" << endl;
         getPersonData();
         getPersonalData();
         getProfessionalData();
@@ -78,17 +78,12 @@ public:
     }
 
     void printBioData() {
-        cout << "\n===============================" << endl;
-        cout << "          EMPLOYEE BIO-DATA       " << endl;
-        cout << "===============================" << endl;
-
         displayPersonData();
         displayPersonalData();
         displayProfessionalData();
 
         cout << "Degree     : " << degree << endl;
         cout << "Marks/CGPA : " << marks << endl;
-        cout << "===============================" << endl;
     }
 };
 
