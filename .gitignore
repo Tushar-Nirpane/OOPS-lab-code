@@ -1,0 +1,13 @@
+# Build output
+build/
+*.o
+*.out
+*.dSYM/
+a.out
+students.txt
+
+# Editor / OS noise
+.DS_Store
+.vscode/
+.idea/
+*.swp
