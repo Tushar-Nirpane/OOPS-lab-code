@@ -5,8 +5,8 @@ CXX      ?= g++
 CXXFLAGS ?= -std=c++17 -Wall -Wextra -Wpedantic -O2
 SANFLAGS := -std=c++17 -g -fsanitize=address,undefined -fno-omit-frame-pointer
 
-SRC := $(sort $(wildcard src/*.cpp))
-BIN := $(patsubst src/%.cpp,build/%,$(SRC))
+SRC := $(sort $(wildcard *.cpp))
+BIN := $(patsubst %.cpp,build/%,$(SRC))
 
 .PHONY: all test run sanitize clean
 
@@ -15,7 +15,7 @@ all: $(BIN)
 build:
 	@mkdir -p build
 
-build/%: src/%.cpp | build
+build/%: %.cpp | build
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
 # Feed each program its scripted input and report pass/fail.
@@ -45,8 +45,8 @@ sanitize:
 	    name=$$(basename $$f .cpp); \
 	    $(CXX) $(SANFLAGS) -o build/san/$$name $$f || exit 1; \
 	done; \
-	for b in $(SRC); do \
-	    name=$$(basename $$b .cpp); \
+	for f in $(SRC); do \
+	    name=$$(basename $$f .cpp); \
 	    if ASAN_OPTIONS=detect_leaks=0 ./build/san/$$name < tests/$$name.in > /dev/null 2>/tmp/san_$$name.err; then \
 	        printf '  CLEAN %s\n' $$name; \
 	    else \
